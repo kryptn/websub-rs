@@ -1,0 +1,7 @@
+
+apply:
+    terraform apply
+
+redeploy:
+    terraform destroy --auto-approve
+    terraform apply --auto-approve
