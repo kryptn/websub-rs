@@ -2,10 +2,39 @@
 
 collection of lambda functions to eventually potentially act as a websub hub
 
+## Plan
+
+
+## Schema
+
+### table: subscriptions
+    hubUrl: String,
+    topicUrl: String,
+    handler: String,
+    callbackIndex: uuid,
+    ttl: ???
+
+### table: callbacks
+    index: uuid
+    handler: string
+    ttl: ???
+
+## Functions
+
 ### subscribe
 iam: dynamodb:
     subscriptions
     callbacks
+
+```json
+{
+    "hubUrl": "",
+    "topicUrl": "",
+    "leaseSeconds": "",
+    "handler": "",
+    "callbackKey": "optional"
+}
+```
 
 create callback row
 register subscription with ttl
@@ -14,6 +43,9 @@ register subscription with ttl
 iam: dynamodb
 
 invoke this with event
+
+### subscribe-confirm:
+api gateway -> confirm
 
 ### renew
 
