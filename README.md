@@ -5,6 +5,13 @@ collection of lambda functions to eventually potentially act as a websub hub
 ## Plan
 
 
+
+
+
+
+
+
+
 ## Schema
 
 ### table: subscriptions
@@ -18,6 +25,54 @@ collection of lambda functions to eventually potentially act as a websub hub
     index: uuid
     handler: string
     ttl: ???
+
+### table: messages
+    index: string
+    body: string
+    ttl: ???
+
+```mermaid
+
+stateDiagram-v2
+
+    state "Subscribe Function" as subscribe
+    state "Webhook Function" as webhook
+    state "Challenge Function" as challenge
+    state "Subscriptions" as subscriptions
+    state "Notify" as notify
+    state "Callbacks" as callbacks
+    state "Messages" as messages
+    state "Websub Hub" as websub
+
+    [*] --> subscribe
+    subscribe --> subscriptions: add to subscriptions
+    subscribe --> websub: send subscription
+    subscriptions --> subscribe: on ttl expire and delete
+    subscribe --> callbacks: upsert callback entry
+    challenge --> callbacks: validate and confirm
+    websub --> challenge
+
+    webhook --> messages: validate, add message to table
+    messages --> notify: on insert
+    notify --> [*]: send to world
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Functions
 
