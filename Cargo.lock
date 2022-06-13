@@ -848,6 +848,17 @@ name = "websub"
 version = "0.1.0"
 
 [[package]]
+name = "websub-challenge-response"
+version = "0.1.0"
+dependencies = [
+ "lambda_http",
+ "lambda_runtime",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "websub-lambda"
 version = "0.1.0"
 dependencies = [
@@ -855,6 +866,50 @@ dependencies = [
  "lambda_runtime",
  "serde",
  "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "websub-notify"
+version = "0.1.0"
+dependencies = [
+ "aws_lambda_events",
+ "lambda_runtime",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "websub-renew"
+version = "0.1.0"
+dependencies = [
+ "aws_lambda_events",
+ "lambda_runtime",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "websub-subscribe"
+version = "0.1.0"
+dependencies = [
+ "lambda_runtime",
+ "serde",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "websub-webhook"
+version = "0.1.0"
+dependencies = [
+ "lambda_http",
+ "lambda_runtime",
  "tokio",
  "tracing",
  "tracing-subscriber",

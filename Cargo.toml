@@ -3,5 +3,10 @@
 members = [
     "websub",
     "websub-lambda",
+    "websub-notify",
+    "websub-renew",
+    "websub-subscribe",
+    "websub-webhook",
+    "websub-challenge-response",
 
 ]

@@ -29,6 +29,7 @@ collection of lambda functions to eventually potentially act as a websub hub
 ### table: messages
     index: string
     body: string
+    handler: string
     ttl: ???
 
 ```mermaid
@@ -38,36 +39,26 @@ stateDiagram-v2
     state "Subscribe Function" as subscribe
     state "Webhook Function" as webhook
     state "Challenge Function" as challenge
+    state "Send Challenge" as sendchallenge
     state "Subscriptions" as subscriptions
     state "Notify" as notify
     state "Callbacks" as callbacks
     state "Messages" as messages
-    state "Websub Hub" as websub
+    state "Websub Sub" as websubsub
 
     [*] --> subscribe
-    subscribe --> subscriptions: add to subscriptions
-    subscribe --> websub: send subscription
-    subscriptions --> subscribe: on ttl expire and delete
     subscribe --> callbacks: upsert callback entry
-    challenge --> callbacks: validate and confirm
-    websub --> challenge
+    subscribe --> websubsub: send subscription
+    callbacks --> sendchallenge: on insert or update
+    subscriptions --> subscribe: on ttl expire and delete
+    challenge --> subscriptions: insert after challenge verified
 
-    webhook --> messages: validate, add message to table
+    webhook --> messages: validate, handler lookup, add message to table
     messages --> notify: on insert
     notify --> [*]: send to world
 
 
-
-
 ```
-
-
-
-
-
-
-
-
 
 
 
