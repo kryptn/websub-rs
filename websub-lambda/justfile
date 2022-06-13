@@ -1,5 +1,0 @@
-
-
-build-lambda:
-    # rm -rf ../target/lambda/websub-lambda
-    cargo lambda build --release --output-format zip --lambda-dir .

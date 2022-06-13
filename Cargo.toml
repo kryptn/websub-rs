@@ -2,11 +2,11 @@
 
 members = [
     "websub",
-    "websub-lambda",
-    "websub-notify",
-    "websub-renew",
-    "websub-subscribe",
-    "websub-webhook",
-    "websub-challenge-response",
+    "functions/websub-challenge-response",
+    "functions/websub-notify",
+    "functions/websub-renew",
+    "functions/websub-subscribe",
+    "functions/websub-webhook",
+
 
 ]
