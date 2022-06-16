@@ -6,7 +6,9 @@ use serde::{Deserialize, Serialize};
 /// The runtime pays no attention to the contents of the request payload.
 #[derive(Deserialize)]
 struct Request {
-    command: String,
+    hub_url: String,
+    topic_url: String,
+    subscription_id: Option<String>,
 }
 
 /// This is a made-up example of what a response structure may look like.

@@ -21,10 +21,14 @@ collection of lambda functions to eventually potentially act as a websub hub
     callbackIndex: uuid,
     ttl: ???
 
-### table: callbacks
+### table: subscription_leases
     index: uuid
     handler: string
     ttl: ???
+
+### table: subscription_handlers
+    subscription_id: uuid
+    handler: string
 
 ### table: messages
     index: string

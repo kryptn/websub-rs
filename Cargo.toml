@@ -2,6 +2,7 @@
 
 members = [
     "websub",
+    "websub-cli",
     "functions/websub-challenge-response",
     "functions/websub-notify",
     "functions/websub-renew",
