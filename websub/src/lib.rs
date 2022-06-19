@@ -2,12 +2,12 @@ use aws_config::meta::region::RegionProviderChain;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use aws_sdk_dynamodb::{Client, client, Region};
+use aws_sdk_dynamodb::{Client, client::{self, fluent_builders::PutItem}, Region, model::AttributeValue};
 
 
 
 trait IntoPutItem {
-    type Object;
+    fn into_put_item(&self, client: Client) -> PutItem;
 }
 
 
@@ -18,10 +18,16 @@ pub struct Subscription {
     pub hub_url: String,
 }
 
+impl IntoPutItem for Subscription {
+    fn into_put_item(&self, client: Client) -> PutItem {
+        let id = AttributeValue::S(self.id.to_string());
+        let topic_url = AttributeValue::S(self.topic_url.clone());
+        let hub_url = AttributeValue::S(self.hub_url.clone());
 
-impl Into<PutItem> for PutSubscription {
-
+        client.put_item().item("Id", id).item("TopicUrl", topic_url).item("HubUrl", hub_url)
+    }
 }
+
 
 #[derive(Serialize, Deserialize)]
 pub struct SubscriptionLease {
@@ -72,6 +78,9 @@ async fn thing() {
     let shared_config = aws_config::from_env().region(region_provider).load().await;
 
     let client = Client::new(&shared_config);
+
+
+    
 
 
 }
