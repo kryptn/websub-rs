@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use websub::{dynamodb_client, IntoPutItem, Subscription, WebsubClient};
+use websub::{Subscription, WebsubClient};
 
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -11,12 +11,8 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Adds files to myapp
-    AddSubscription {
-        #[clap(value_parser)]
-        topic_url: String,
-        hub_url: String,
-    },
+    AddSubscription { topic_url: String, hub_url: String },
+    GetSubscriptions,
 }
 
 #[tokio::main]
@@ -24,15 +20,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
     let client = WebsubClient::default().await;
 
-
-
-    // You can check for the existence of subcommands, and if found use their
-    // matches just as you would the top level cmd
     match &cli.command {
         Commands::AddSubscription { topic_url, hub_url } => {
             let subscription = Subscription::new(topic_url.to_owned(), hub_url.to_owned());
             client.create_subscription(subscription).await?;
-
+        }
+        Commands::GetSubscriptions => {
+            let subscriptions = client.get_subscriptions().await?;
+            dbg!(subscriptions);
         }
     }
     Ok(())
