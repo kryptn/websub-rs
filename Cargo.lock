@@ -1313,15 +1313,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_dynamo"
-version = "4.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb37769ece4c364ead6366ea877876279c1a16315b589063faff2710a35351af"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "serde_json"
 version = "1.0.81"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1747,7 +1738,6 @@ dependencies = [
  "aws-sdk-dynamodb",
  "eyre",
  "serde",
- "serde_dynamo",
  "uuid",
 ]
 
@@ -1803,6 +1793,7 @@ dependencies = [
  "tokio",
  "tracing",
  "tracing-subscriber",
+ "websub",
 ]
 
 [[package]]
