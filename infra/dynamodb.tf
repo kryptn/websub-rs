@@ -70,7 +70,7 @@ resource "aws_dynamodb_table" "subscription_handlers" {
 
 
 resource "aws_dynamodb_table" "messages" {
-  name         = "callbacks"
+  name         = "messages"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "Id"
   range_key    = "SubscriptionId"

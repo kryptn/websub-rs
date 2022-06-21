@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "3.2.5", features = ["derive"] }
+tokio = { version = "1.19.2", features = ["full"] }
+websub = { version = "0.1.0", path = "../websub" }
