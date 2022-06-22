@@ -1,13 +1,13 @@
 use std::env;
 
-use lambda_http::{run, service_fn, Error, IntoResponse, Request, RequestExt, Response};
+use lambda_http::{run, service_fn, Error, IntoResponse, Request, Response};
 use tracing_subscriber::EnvFilter;
 
 /// This is the main body for the function.
 /// Write your code inside it.
 /// There are some code example in the following URLs:
 /// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/lambda-http/examples
-async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
+async fn function_handler(_event: Request) -> Result<impl IntoResponse, Error> {
     // Extract some useful information from the request
 
     // Return something that implements IntoResponse.

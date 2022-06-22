@@ -14,10 +14,10 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
 
     let query = event.query_string_parameters();
 
-    let mode = query
+    let _mode = query
         .first("hub.mode")
         .expect("challenge must include mode");
-    let topic = query
+    let _topic = query
         .first("hub.topic")
         .expect("challenge must include topic");
     let challenge = query
