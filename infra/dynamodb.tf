@@ -1,11 +1,11 @@
 resource "aws_dynamodb_table" "subscriptions" {
   name         = "subscriptions"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "Id"
+  hash_key     = "id"
   range_key    = ""
 
   attribute {
-    name = "Id"
+    name = "id"
     type = "S"
   }
 
@@ -16,16 +16,16 @@ resource "aws_dynamodb_table" "subscriptions" {
 resource "aws_dynamodb_table" "subscription_leases" {
   name         = "subscription_leases"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "SubscriptionId"
+  hash_key     = "subscription_id"
 
   attribute {
-    name = "SubscriptionId"
+    name = "subscription_id"
     type = "S"
   }
 
   ttl {
     enabled        = true
-    attribute_name = "Expiry"
+    attribute_name = "expiry"
   }
 
   stream_enabled   = true
@@ -35,33 +35,33 @@ resource "aws_dynamodb_table" "subscription_leases" {
 resource "aws_dynamodb_table" "subscription_handlers" {
   name         = "subscription_handlers"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "SubscriptionId"
-  range_key    = "Handler"
+  hash_key     = "subscription_id"
+  range_key    = "handler"
 
   attribute {
-    name = "SubscriptionId"
+    name = "subscription_id"
     type = "S"
   }
 
   attribute {
-    name = "Handler"
+    name = "handler"
     type = "S"
   }
 
   local_secondary_index {
     name            = "handler_idx"
     projection_type = "KEYS_ONLY"
-    range_key       = "Handler"
+    range_key       = "handler"
   }
 
   # attribute {
-  #     name = "Expiry"
+  #     name = "expiry"
   #     type = "N"
   # }
 
   # ttl {
   #     enabled = true
-  #     attribute_name = "Expiry"
+  #     attribute_name = "expiry"
   # }
 
   # stream_enabled = true
@@ -72,23 +72,23 @@ resource "aws_dynamodb_table" "subscription_handlers" {
 resource "aws_dynamodb_table" "messages" {
   name         = "messages"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "Id"
-  range_key    = "SubscriptionId"
+  hash_key     = "id"
+  range_key    = "subscription_id"
 
   attribute {
-    name = "Id"
+    name = "id"
     type = "S"
   }
 
   attribute {
-    name = "SubscriptionId"
+    name = "subscription_id"
     type = "S"
   }
 
 
   ttl {
     enabled        = true
-    attribute_name = "Expiry"
+    attribute_name = "expiry"
   }
 
   stream_enabled   = true
