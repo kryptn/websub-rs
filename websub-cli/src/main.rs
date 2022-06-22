@@ -23,7 +23,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match &cli.command {
         Commands::AddSubscription { topic_url, hub_url } => {
             let subscription = Subscription::new(topic_url.to_owned(), hub_url.to_owned());
-            client.create_subscription(subscription).await?;
+            client.create_subscription(&subscription).await?;
         }
         Commands::GetSubscriptions => {
             let subscriptions = client.get_subscriptions().await?;

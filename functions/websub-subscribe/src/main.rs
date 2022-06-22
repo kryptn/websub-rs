@@ -20,7 +20,7 @@ async fn function_handler(event: LambdaEvent<Request>) -> Result<Subscription, E
     // Extract some useful info from the request
     let client = WebsubClient::default().await;
     let subscription = Subscription::new(event.payload.topic_url, event.payload.hub_url);
-    client.create_subscription(subscription.clone()).await?;
+    client.create_subscription(&subscription).await?;
     // Return `Response` (it will be serialized to JSON automatically by the runtime)
     Ok(subscription)
 }
