@@ -7,6 +7,20 @@ module "subscribe_function" {
   region = var.region
 }
 
+resource "aws_lambda_event_source_mapping" "subscription_added" {
+  event_source_arn  = aws_dynamodb_table.subscriptions.stream_arn
+  function_name     = module.subscribe_function.lambda_arn
+  starting_position = "LATEST"
+
+  filter_criteria {
+    filter {
+      pattern = jsonencode({
+        eventName : ["INSERT", "UPDATE"]
+      })
+    }
+  }
+}
+
 output "subscribe_lambda_arn" {
   value = module.subscribe_function.lambda_arn
 }

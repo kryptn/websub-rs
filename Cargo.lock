@@ -1285,6 +1285,7 @@ checksum = "eb37769ece4c364ead6366ea877876279c1a16315b589063faff2710a35351af"
 dependencies = [
  "aws-sdk-dynamodb",
  "aws-sdk-dynamodbstreams",
+ "aws_lambda_events",
  "serde",
 ]
 
@@ -1738,6 +1739,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "websub-add-subscription"
+version = "0.1.0"
+dependencies = [
+ "lambda_runtime",
+ "serde",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "websub",
+]
+
+[[package]]
 name = "websub-challenge-response"
 version = "0.1.0"
 dependencies = [
@@ -1784,8 +1797,9 @@ dependencies = [
 name = "websub-subscribe"
 version = "0.1.0"
 dependencies = [
+ "aws_lambda_events",
  "lambda_runtime",
- "serde",
+ "serde_dynamo",
  "tokio",
  "tracing",
  "tracing-subscriber",

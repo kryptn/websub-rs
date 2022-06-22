@@ -1,5 +1,5 @@
 [package]
-name = "websub-subscribe"
+name = "websub-add-subscription"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,9 +11,8 @@ edition = "2021"
 # and it will keep the alphabetic ordering for you.
 
 [dependencies]
-aws_lambda_events = { version = "0.6.1", default-features = false, features = ["dynamodb"] }
 lambda_runtime = "0.5.1"
-serde_dynamo = { version = "4.0.2", features = ["aws-sdk-dynamodbstreams+0_13", "aws_lambda_events+0_6"] }
+serde = "1.0.136"
 tokio = { version = "1", features = ["macros"] }
 tracing = { version = "0.1", features = ["log"] }
 tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt", "json", "env-filter"] }

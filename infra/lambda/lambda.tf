@@ -15,7 +15,7 @@ resource "aws_lambda_function" "fn" {
 
   environment {
     variables = {
-      RUST_LOG = "trace"
+      RUST_LOG = "debug"
     }
   }
 }
