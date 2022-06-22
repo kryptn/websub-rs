@@ -44,12 +44,32 @@ resource "aws_iam_role_policy_attachment" "basic_policy" {
   policy_arn = data.aws_iam_policy.basic_policy.arn
 }
 
-data "aws_iam_policy" "dynamodb_policy" {
-  arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole"
+data "aws_iam_policy_document" "dynamodb_policy" {
+  statement {
+    actions = [
+                "dynamodb:DescribeStream",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:ListStreams",
+                "dynamodb:GetItem",
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:Query",
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+    ]
+    effect = "Allow"
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "dynamodb_policy" {
+  policy = data.aws_iam_policy_document.dynamodb_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "dynamodb_policy" {
   role       = aws_iam_role.exec.name
-  policy_arn = data.aws_iam_policy.dynamodb_policy.arn
+  policy_arn = aws_iam_policy.dynamodb_policy.arn
 }
 

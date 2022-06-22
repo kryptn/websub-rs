@@ -3,6 +3,8 @@ module "webhook_function" {
   source  = "./lambda"
   name    = "websub-webhook"
   archive = "../target/lambda/websub-webhook/bootstrap.zip"
+
+  region = var.region
 }
 
 
@@ -25,4 +27,18 @@ resource "aws_lambda_permission" "webhook" {
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_api_gateway_rest_api.websub.execution_arn}/*/*"
+}
+
+
+
+output "webhook_lambda_arn" {
+  value = module.webhook_function.lambda_arn
+}
+
+output "webhook_lambda_invoke_arn" {
+  value = module.webhook_function.lambda_invoke_arn
+}
+
+output "webhook_lambda_name" {
+  value = module.webhook_function.lambda_name
 }

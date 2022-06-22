@@ -189,6 +189,15 @@ impl WebsubClient {
             Ok(vec![])
         }
     }
+
+    pub async fn put_messages_for_callback(
+        &self,
+
+    ) -> Result<()> {
+
+
+        Ok(())
+    }
 }
 
 #[cfg(test)]

@@ -3,6 +3,8 @@ module "notify_function" {
   source  = "./lambda"
   name    = "websub-notify"
   archive = "../target/lambda/websub-notify/bootstrap.zip"
+
+  region = var.region
 }
 
 resource "aws_lambda_event_source_mapping" "message_added" {
@@ -19,3 +21,15 @@ resource "aws_lambda_event_source_mapping" "message_added" {
   }
 }
 
+
+output "notify_lambda_arn" {
+  value = module.notify_function.lambda_arn
+}
+
+output "notify_lambda_invoke_arn" {
+  value = module.notify_function.lambda_invoke_arn
+}
+
+output "notify_lambda_name" {
+  value = module.notify_function.lambda_name
+}

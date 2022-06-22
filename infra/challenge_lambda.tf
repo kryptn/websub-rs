@@ -3,6 +3,8 @@ module "challenge_function" {
   source  = "./lambda"
   name    = "websub-challenge-response"
   archive = "../target/lambda/websub-challenge-response/bootstrap.zip"
+
+  region = var.region
 }
 
 resource "aws_api_gateway_integration" "challenge" {
@@ -24,4 +26,17 @@ resource "aws_lambda_permission" "challenge" {
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_api_gateway_rest_api.websub.execution_arn}/*/*"
+}
+
+
+output "challenge_lambda_arn" {
+  value = module.challenge_function.lambda_arn
+}
+
+output "challenge_lambda_invoke_arn" {
+  value = module.challenge_function.lambda_invoke_arn
+}
+
+output "challenge_lambda_name" {
+  value = module.challenge_function.lambda_name
 }

@@ -5,3 +5,7 @@ variable "name" {
 variable "archive" {
     type = string
 }
+
+variable "region" {
+    type = string
+}
