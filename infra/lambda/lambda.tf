@@ -1,6 +1,6 @@
 
-variable environment {
-  type = map(string)
+variable "environment" {
+  type    = map(string)
   default = {}
 }
 
@@ -27,6 +27,6 @@ resource "aws_lambda_function" "fn" {
 }
 
 resource "aws_cloudwatch_log_group" "lambda" {
-  name = "/aws/lambda/${aws_lambda_function.fn.function_name}"
+  name              = "/aws/lambda/${aws_lambda_function.fn.function_name}"
   retention_in_days = 30
 }

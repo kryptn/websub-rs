@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "ssm_read_policy" {
       "ssm:GetParameters",
       "ssm:GetParametersByPath"
     ]
-    effect = "Allow"
+    effect    = "Allow"
     resources = ["arn:aws:ssm:::parameter/websub", "arn:aws:ssm:::parameter/api_gateway/websub/"]
   }
 }
@@ -53,7 +53,7 @@ resource "aws_iam_policy" "ssm_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "ssm_policy" {
-    role       = aws_iam_role.exec.name
+  role       = aws_iam_role.exec.name
   policy_arn = aws_iam_policy.ssm_policy.arn
 }
 
@@ -70,19 +70,19 @@ resource "aws_iam_role_policy_attachment" "basic_policy" {
 data "aws_iam_policy_document" "dynamodb_policy" {
   statement {
     actions = [
-                "dynamodb:DescribeStream",
-                "dynamodb:GetRecords",
-                "dynamodb:GetShardIterator",
-                "dynamodb:ListStreams",
-                "dynamodb:GetItem",
-                "dynamodb:PutItem",
-                "dynamodb:DeleteItem",
-                "dynamodb:Query",
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents"
+      "dynamodb:DescribeStream",
+      "dynamodb:GetRecords",
+      "dynamodb:GetShardIterator",
+      "dynamodb:ListStreams",
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:Query",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
     ]
-    effect = "Allow"
+    effect    = "Allow"
     resources = ["*"]
   }
 }
