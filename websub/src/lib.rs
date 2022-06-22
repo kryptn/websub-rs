@@ -29,6 +29,24 @@ impl Subscription {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct AddSubscription {
+    pub id: Option<Uuid>,
+    pub topic_url: String,
+    pub hub_url: String,
+}
+
+impl From<AddSubscription> for Subscription {
+    fn from(s: AddSubscription) -> Self {
+        let mut sub = Subscription::new(s.topic_url, s.hub_url);
+        if let Some(id) = s.id {
+            sub.id = id;
+        }
+
+        sub
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SubscriptionLease {
     pub subscription_id: Uuid,
     pub expiry: isize,
@@ -190,12 +208,7 @@ impl WebsubClient {
         }
     }
 
-    pub async fn put_messages_for_callback(
-        &self,
-
-    ) -> Result<()> {
-
-
+    pub async fn put_messages_for_callback(&self) -> Result<()> {
         Ok(())
     }
 }

@@ -19,3 +19,9 @@ build-and-deploy:
 build-and-redeploy:
     just build
     just redeploy
+
+add-spacex:
+    cargo run -p websub-cli --release --quiet add-subscription "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UCtI0Hodo5o5dUb67FeUjDeA" "https://pubsubhubbub.appspot.com/subscribe"
+
+get-subs:
+    cargo run -p websub-cli --release --quiet get-subscriptions

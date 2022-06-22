@@ -1,4 +1,7 @@
+use std::env;
+
 use lambda_http::{run, service_fn, Error, IntoResponse, Request, RequestExt, Response};
+use tracing_subscriber::EnvFilter;
 
 /// This is the main body for the function.
 /// Write your code inside it.
@@ -33,11 +36,16 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::INFO)
-        // disabling time is handy because CloudWatch will add the ingestion time.
-        .without_time()
-        .init();
+    let builder = tracing_subscriber::fmt()
+        .json()
+        .with_env_filter(EnvFilter::from_default_env())
+        .without_time();
+
+    if env::var("AWS_EXECUTION_ENV").is_ok() {
+        builder.json().init();
+    } else {
+        builder.init();
+    }
 
     run(service_fn(function_handler)).await
 }
