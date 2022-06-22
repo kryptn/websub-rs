@@ -35,6 +35,29 @@ resource "aws_iam_role" "exec" {
 
 # }
 
+
+data "aws_iam_policy_document" "ssm_read_policy" {
+  statement {
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:GetParametersByPath"
+    ]
+    effect = "Allow"
+    resources = ["arn:aws:ssm:::parameter/websub", "arn:aws:ssm:::parameter/api_gateway/websub/"]
+  }
+}
+
+resource "aws_iam_policy" "ssm_policy" {
+  policy = data.aws_iam_policy_document.ssm_read_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_policy" {
+    role       = aws_iam_role.exec.name
+  policy_arn = aws_iam_policy.ssm_policy.arn
+}
+
+
 data "aws_iam_policy" "basic_policy" {
   arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }

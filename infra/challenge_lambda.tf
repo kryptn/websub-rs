@@ -5,6 +5,10 @@ module "challenge_function" {
   archive = "../target/lambda/websub-challenge-response/bootstrap.zip"
 
   region = var.region
+
+  environment = {
+    INVOKE_URL_SSM_PARAM = "/api_gateway/websub/invokeUrl"
+  }
 }
 
 resource "aws_api_gateway_integration" "challenge" {
@@ -12,7 +16,7 @@ resource "aws_api_gateway_integration" "challenge" {
   resource_id = aws_api_gateway_method.proxy_get.resource_id
   http_method = aws_api_gateway_method.proxy_get.http_method
 
-  integration_http_method = "GET"
+  integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = module.challenge_function.lambda_invoke_arn
 }

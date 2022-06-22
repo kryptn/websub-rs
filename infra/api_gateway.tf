@@ -33,6 +33,13 @@ resource "aws_api_gateway_deployment" "websub-deploy" {
   stage_name  = "test"
 }
 
+
+resource "aws_ssm_parameter" "api_gateway_url" {
+  name  = "/api_gateway/websub/invokeUrl"
+  type  = "String"
+  value = aws_api_gateway_deployment.websub-deploy.invoke_url
+}
+
 output "api_gateway_url" {
   value = aws_api_gateway_deployment.websub-deploy.invoke_url
 }

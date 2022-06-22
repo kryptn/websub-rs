@@ -6,6 +6,25 @@ use serde_dynamo::from_item;
 use tracing_subscriber::EnvFilter;
 use websub::Subscription;
 
+async fn handle(subscription: Subscription, client: reqwest::Client) -> Result<(), Error> {
+    client
+        .post(subscription.hub_url)
+        .query(&[
+            ("hub.mode", "subscribe"),
+            ("hub.topic", &subscription.topic_url),
+            ("hub.callback", ""),
+            ("hub.verify", "sync"),
+            ("hub.verify_token", "password"),
+            ("hub.lease_seconds", "3600"),
+            ("websub.subscriptionId", &subscription.id.to_string()),
+        ])
+        .send()
+        .await?
+        .error_for_status()?;
+
+    Ok(())
+}
+
 /// This is the main body for the function.
 /// Write your code inside it.
 /// There are some code example in the following URLs:
@@ -14,9 +33,11 @@ use websub::Subscription;
 async fn function_handler(event: LambdaEvent<Event>) -> Result<(), Error> {
     // Extract some useful information from the request
 
+    let client = reqwest::Client::new();
+
     for record in event.payload.records {
         let item: Subscription = from_item(record.change.new_image)?;
-        dbg!(item);
+        handle(item, client.clone()).await?;
     }
 
     Ok(())

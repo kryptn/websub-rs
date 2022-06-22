@@ -49,14 +49,23 @@ impl From<AddSubscription> for Subscription {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SubscriptionLease {
     pub subscription_id: Uuid,
-    pub expiry: isize,
+    pub expiry: usize,
+}
+
+impl SubscriptionLease {
+    pub fn new(subscription_id: Uuid, expiry: usize) -> Self {
+        Self {
+            subscription_id,
+            expiry,
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SubscriptionHandler {
     pub subscription_id: Uuid,
     pub handler: String,
-    //pub expiry: isize
+    //pub expiry: usize
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -64,7 +73,7 @@ pub struct Message {
     pub id: Uuid,
     pub subscription_id: Uuid,
     pub body: String,
-    pub expiry: isize,
+    pub expiry: usize,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -72,7 +81,7 @@ pub struct SubscribeCommand {
     pub subscription_id: Option<Uuid>,
     pub topic_url: String,
     pub hub_url: String,
-    pub lease_seconds: isize,
+    pub lease_seconds: usize,
 }
 
 #[non_exhaustive]
@@ -161,7 +170,7 @@ impl WebsubClient {
         }
     }
 
-    pub async fn create_lease(&self, lease: SubscriptionLease) -> Result<()> {
+    pub async fn create_lease(&self, lease: &SubscriptionLease) -> Result<()> {
         let item = to_item(lease)?;
         self.client
             .put_item()
@@ -173,7 +182,7 @@ impl WebsubClient {
         Ok(())
     }
 
-    pub async fn add_handler(&self, handler: SubscriptionHandler) -> Result<()> {
+    pub async fn add_handler(&self, handler: &SubscriptionHandler) -> Result<()> {
         let item = to_item(handler)?;
         self.client
             .put_item()

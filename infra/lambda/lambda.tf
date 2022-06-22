@@ -1,3 +1,9 @@
+
+variable environment {
+  type = map(string)
+  default = {}
+}
+
 resource "aws_lambda_function" "fn" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
@@ -14,9 +20,9 @@ resource "aws_lambda_function" "fn" {
   runtime = "provided.al2"
 
   environment {
-    variables = {
+    variables = merge({
       RUST_LOG = "debug"
-    }
+    }, var.environment)
   }
 }
 

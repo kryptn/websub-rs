@@ -21,6 +21,8 @@ resource "aws_lambda_event_source_mapping" "subscription_added" {
   }
 }
 
+
+
 output "subscribe_lambda_arn" {
   value = module.subscribe_function.lambda_arn
 }
