@@ -1,21 +1,14 @@
-use std::collections::HashMap;
-
 use aws_config::meta::region::RegionProviderChain;
 use serde_derive::{Deserialize, Serialize};
 use serde_dynamo::{from_items, to_item};
 use uuid::Uuid;
 
 use aws_sdk_dynamodb::{
-    client::fluent_builders::PutItem,
     model::{AttributeValue, Select},
     Client, Region,
 };
 
 use eyre::Result;
-
-// pub trait IntoPutItem {
-//     fn into_put_item(&self, client: &Client) -> PutItem;
-// }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Subscription {
@@ -127,7 +120,7 @@ impl WebsubClient {
         let item = to_item(subscription)?;
         self.client
             .put_item()
-            .table_name(self.tables.subscriptions.clone())
+            .table_name(&self.tables.subscriptions)
             .set_item(Some(item))
             .send()
             .await?;
@@ -139,7 +132,7 @@ impl WebsubClient {
         let result = self
             .client
             .scan()
-            .table_name(self.tables.subscriptions.clone())
+            .table_name(&self.tables.subscriptions)
             .send()
             .await?;
         if let Some(items) = result.items {
@@ -154,7 +147,7 @@ impl WebsubClient {
         let item = to_item(lease)?;
         self.client
             .put_item()
-            .table_name(self.tables.leases.clone())
+            .table_name(&self.tables.leases)
             .set_item(Some(item))
             .send()
             .await?;
@@ -166,7 +159,7 @@ impl WebsubClient {
         let item = to_item(handler)?;
         self.client
             .put_item()
-            .table_name(self.tables.handlers.clone())
+            .table_name(&self.tables.handlers)
             .set_item(Some(item))
             .send()
             .await?;
@@ -181,7 +174,7 @@ impl WebsubClient {
         let resp = self
             .client
             .query()
-            .table_name(self.tables.handlers.clone())
+            .table_name(&self.tables.handlers)
             .key_condition_expression("#key = :value")
             .expression_attribute_names("#key", "subscription_id")
             .expression_attribute_values(":value", AttributeValue::S(subscription_id.to_string()))
