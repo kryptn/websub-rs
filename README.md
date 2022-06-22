@@ -14,6 +14,16 @@ collection of lambda functions to eventually potentially act as a websub hub
 - [ ] api_gateway post -> webhook -> find handlers -> for each dynamodb insert message
 - [ ] on message insert -> notify -> find consumer -> send message
 
+## Todos
+
+
+- create consumer table
+- create add-consumer command
+- create create-handler command
+- find a way to parse whatever youtube returns
+- write webhook function
+- write notify function
+- write stats function?
 
 
 ## Schema
