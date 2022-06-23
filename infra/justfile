@@ -2,6 +2,9 @@
 apply:
     terraform apply
 
+apply-auto:
+    terraform apply --auto-approve
+
 redeploy:
     terraform destroy --auto-approve
     terraform apply --auto-approve

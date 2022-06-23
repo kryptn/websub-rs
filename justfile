@@ -10,6 +10,9 @@ build:
 deploy:
     just infra/ apply
 
+deploy-auto:
+    just infra/ apply-auto
+
 redeploy:
     just infra/ redeploy
 

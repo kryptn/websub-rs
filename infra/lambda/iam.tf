@@ -16,39 +16,24 @@ resource "aws_iam_role" "exec" {
 
 }
 
-# resource "aws_iam_policy" "ssm_read" {
-#     name = "${var.name}-ssm-read"
-#     policy = jsonencode({
-#             Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Action   =[
-#               "ssm:GetParameter",
-#               "ssm:GetParameters",
-#               "ssm:GetParametersByPath",
-#             ]
-#         Effect   = "Allow"
-#         Resource = "arn:aws:ssm:::parameter/websub/"
-#       },
-#     ]
-#     })
 
-# }
 
 
 data "aws_iam_policy_document" "ssm_read_policy" {
+
   statement {
     actions = [
       "ssm:GetParameter",
       "ssm:GetParameters",
-      "ssm:GetParametersByPath"
+      "ssm:GetParametersByPath",
     ]
     effect    = "Allow"
-    resources = ["arn:aws:ssm:::parameter/websub", "arn:aws:ssm:::parameter/api_gateway/websub/"]
+    resources = ["*"]
   }
 }
 
 resource "aws_iam_policy" "ssm_policy" {
+  name   = "${var.name}-ssm-read"
   policy = data.aws_iam_policy_document.ssm_read_policy.json
 }
 
@@ -88,6 +73,8 @@ data "aws_iam_policy_document" "dynamodb_policy" {
 }
 
 resource "aws_iam_policy" "dynamodb_policy" {
+  name = "${var.name}-dynamodb-stream-read-write"
+
   policy = data.aws_iam_policy_document.dynamodb_policy.json
 }
 

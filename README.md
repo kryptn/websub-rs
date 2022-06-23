@@ -4,7 +4,6 @@ collection of lambda functions to eventually potentially act as a websub hub
 
 ## Plan
 
-
 - [x] cli add-subscription -> add-subscription -> dynamodb insert subscriptions
 - [ ] on subscriptions insert/update -> subscribe -> send subscribe request
 - [x] api_gateway get -> challenge-verify -> dynamodb insert lease | resp 200
@@ -16,7 +15,6 @@ collection of lambda functions to eventually potentially act as a websub hub
 
 ## Todos
 
-
 - create consumer table
 - create add-consumer command
 - create create-handler command
@@ -24,7 +22,6 @@ collection of lambda functions to eventually potentially act as a websub hub
 - write webhook function
 - write notify function
 - write stats function?
-
 
 ## Schema
 

@@ -5,6 +5,11 @@ module "subscribe_function" {
   archive = "../target/lambda/websub-subscribe/bootstrap.zip"
 
   region = var.region
+
+  environment = {
+    INVOKE_URL_SSM_PARAM = var.api_gateway_url_param
+    VERIFY_TOKEN_PARAM   = var.websub_verify_token_param
+  }
 }
 
 resource "aws_lambda_event_source_mapping" "subscription_added" {

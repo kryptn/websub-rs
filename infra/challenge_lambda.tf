@@ -7,7 +7,7 @@ module "challenge_function" {
   region = var.region
 
   environment = {
-    INVOKE_URL_SSM_PARAM = "/api_gateway/websub/invokeUrl"
+    VERIFY_TOKEN_PARAM = var.websub_verify_token_param
   }
 }
 
