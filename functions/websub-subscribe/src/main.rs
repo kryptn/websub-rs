@@ -14,7 +14,7 @@ async fn handle(
     verify_token: &str,
     client: reqwest::Client,
 ) -> Result<(), Error> {
-    let callback_url = format!("{}/{}", base_invoke_url, &subscription.id.to_string());
+    let callback_url = format!("{}{}", base_invoke_url, &subscription.id.to_string());
 
     let params = {
         let mut p = HashMap::new();

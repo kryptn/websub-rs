@@ -5,7 +5,7 @@ collection of lambda functions to eventually potentially act as a websub hub
 ## Plan
 
 - [x] cli add-subscription -> add-subscription -> dynamodb insert subscriptions
-- [ ] on subscriptions insert/update -> subscribe -> send subscribe request
+- [x] on subscriptions insert/update -> subscribe -> send subscribe request
 - [x] api_gateway get -> challenge-verify -> dynamodb insert lease | resp 200
 - [ ] on lease expire -> renew -> add-subscription
 - [ ] cli add-consumer -> add-consumer -> dynamodb insert consumers
