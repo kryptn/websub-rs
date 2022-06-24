@@ -1,4 +1,4 @@
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 
 use aws_config::meta::region::RegionProviderChain;
 use serde_derive::{Deserialize, Serialize};
@@ -17,6 +17,14 @@ fn now() -> u64 {
         .duration_since(SystemTime::UNIX_EPOCH)
         .unwrap();
     now.as_secs()
+}
+
+fn offset(with: Duration) -> u64 {
+    let now = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .unwrap();
+
+    (now + with).as_secs()
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -85,36 +93,67 @@ impl SubscriptionLease {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SubscriptionHandler {
     pub subscription_id: Uuid,
-    pub handler: String,
-    //pub expiry: usize
+    pub consumer_id: Uuid,
+}
+
+impl SubscriptionHandler {
+    pub fn new(subscription_id: Uuid, consumer_id: Uuid) -> Self {
+        Self {
+            subscription_id,
+            consumer_id,
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Message {
-    pub id: Uuid,
-    pub subscription_id: Uuid,
+    pub id: String,
+    pub consumer_name: String,
     pub body: String,
-    pub expiry: usize,
+    pub subscription_id: Option<Uuid>,
+    pub expiry: u64,
+}
+
+impl Message {
+    pub fn new(
+        id: String,
+        consumer_name: String,
+        subscription_id: Option<Uuid>,
+        body: String,
+    ) -> Self {
+        Self {
+            id,
+            consumer_name,
+            body,
+            subscription_id,
+            expiry: offset(Duration::from_secs(60 * 60)),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct SubscribeCommand {
-    pub subscription_id: Option<Uuid>,
-    pub topic_url: String,
-    pub hub_url: String,
-    pub lease_seconds: usize,
+pub struct SlackIncomingWebhook {
+    url: String,
 }
 
 #[non_exhaustive]
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum HandlerKind {
-    Slack,
+pub enum Destination {
+    SlackIncomingWebhook(SlackIncomingWebhook),
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct AddHandlerCommand {
-    pub subscription_id: Option<Uuid>,
-    pub handler_kind: HandlerKind,
+pub struct Consumer {
+    pub name: String,
+    pub destination: Destination,
+}
+
+impl Consumer {
+    pub fn slack_url(&self) -> Option<String> {
+        match &self.destination {
+            Destination::SlackIncomingWebhook(d) => Some(d.url.clone()),
+        }
+    }
 }
 
 pub async fn dynamodb_client() -> Client {
@@ -133,6 +172,7 @@ struct TableConfig {
     leases: String,
     handlers: String,
     messages: String,
+    consumers: String,
 }
 
 impl Default for TableConfig {
@@ -142,6 +182,7 @@ impl Default for TableConfig {
             leases: "subscription_leases".to_string(),
             handlers: "subscription_handlers".to_string(),
             messages: "messages".to_string(),
+            consumers: "consumers".to_string(),
         }
     }
 }
@@ -227,6 +268,7 @@ impl WebsubClient {
     }
 
     pub async fn add_handler(&self, handler: &SubscriptionHandler) -> Result<()> {
+        // todo: verify that the subscription and handler exist
         let item = to_item(handler)?;
         self.client
             .put_item()
@@ -261,8 +303,49 @@ impl WebsubClient {
         }
     }
 
-    pub async fn put_messages_for_callback(&self) -> Result<()> {
+    pub async fn put_message(&self, message: &Message) -> Result<()> {
+        let item = to_item(message)?;
+        self.client
+            .put_item()
+            .table_name(&self.tables.messages)
+            .set_item(Some(item))
+            .send()
+            .await?;
+
         Ok(())
+    }
+
+    pub async fn add_consumer(&self, consumer: &Consumer) -> Result<()> {
+        let item = to_item(consumer)?;
+        self.client
+            .put_item()
+            .table_name(&self.tables.consumers)
+            .set_item(Some(item))
+            .send()
+            .await?;
+
+        Ok(())
+    }
+
+    pub async fn get_consumer(&self, name: &str) -> Result<Option<Consumer>> {
+        let resp = self
+            .client
+            .query()
+            .table_name(&self.tables.consumers)
+            .key_condition_expression("#key = :value")
+            .expression_attribute_names("#key", "name")
+            .expression_attribute_values(":value", AttributeValue::S(name.to_owned()))
+            .select(Select::AllAttributes)
+            .send()
+            .await?;
+
+        // i'm certain there's a cleaner way to do this with combinators.
+        if let Some(items) = resp.items {
+            let consumers: Vec<Consumer> = from_items(items)?;
+            Ok(Some(consumers[0].clone()))
+        } else {
+            Ok(None)
+        }
     }
 }
 
