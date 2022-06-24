@@ -1,3 +1,5 @@
+use std::time::SystemTime;
+
 use aws_config::meta::region::RegionProviderChain;
 use serde_derive::{Deserialize, Serialize};
 use serde_dynamo::{from_item, from_items, to_item};
@@ -10,20 +12,30 @@ use aws_sdk_dynamodb::{
 
 use eyre::Result;
 
+fn now() -> u64 {
+    let now = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .unwrap();
+    now.as_secs()
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Subscription {
     pub id: Uuid,
     pub topic_url: String,
     pub hub_url: String,
+    pub subscribed_at: u64,
 }
 
 impl Subscription {
     pub fn new(topic_url: String, hub_url: String) -> Self {
         let id = uuid::Uuid::new_v4();
+        let subscribed_at = now();
         Self {
             id,
             topic_url,
             hub_url,
+            subscribed_at,
         }
     }
 }
@@ -38,6 +50,7 @@ pub struct AddSubscription {
 impl From<AddSubscription> for Subscription {
     fn from(s: AddSubscription) -> Self {
         let mut sub = Subscription::new(s.topic_url, s.hub_url);
+        sub.subscribed_at = now();
         if let Some(id) = s.id {
             sub.id = id;
         }

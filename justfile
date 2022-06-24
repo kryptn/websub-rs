@@ -32,4 +32,4 @@ get-subs:
 
 fmt:
     cargo fmt
-    tf fmt --recursive
+    terraform fmt --recursive

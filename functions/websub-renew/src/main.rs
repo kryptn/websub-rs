@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, time::SystemTime};
 
 use aws_lambda_events::event::dynamodb::Event;
 use lambda_runtime::{run, service_fn, Error, LambdaEvent};
@@ -8,8 +8,14 @@ use websub::{SubscriptionLease, WebsubClient};
 
 async fn handle(client: WebsubClient, lease: SubscriptionLease) -> Result<(), Error> {
     let subscription = client.get_subscription_by_id(lease.subscription_id).await?;
-    if let Some(sub) = subscription {
+    if let Some(mut sub) = subscription {
         tracing::info!("renewal candidate found {}", sub.id);
+        sub.subscribed_at = {
+            let now = SystemTime::now()
+                .duration_since(SystemTime::UNIX_EPOCH)
+                .unwrap();
+            now.as_secs()
+        };
         client.create_subscription(&sub).await?;
         tracing::info!("renewed {}", sub.id);
     }
