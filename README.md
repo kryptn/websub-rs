@@ -8,19 +8,16 @@ collection of lambda functions to eventually potentially act as a websub hub
 - [x] on subscriptions insert/update -> subscribe -> send subscribe request
 - [x] api_gateway get -> challenge-verify -> dynamodb insert lease | resp 200
 - [x] on lease expire -> renew -> dynamodb insert subscription
-- [ ] cli add-consumer -> add-consumer -> dynamodb insert consumers
+- [x] cli add-consumer -> add-consumer -> dynamodb insert consumers
 - [ ] cli create-handler -> create-handler -> dynamodb insert handler
 - [ ] api_gateway post -> webhook -> find handlers -> for each dynamodb insert message
-- [ ] on message insert -> notify -> find consumer -> send message
+- [x] on message insert -> notify -> find consumer -> send message
 
 ## Todos
 
-- create consumer table
-- create add-consumer command
 - create create-handler command
 - find a way to parse whatever youtube returns
 - write webhook function
-- write notify function
 - write stats function?
 
 ## Schema
