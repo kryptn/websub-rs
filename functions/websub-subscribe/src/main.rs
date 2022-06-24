@@ -14,6 +14,8 @@ async fn handle(
     verify_token: &str,
     client: reqwest::Client,
 ) -> Result<(), Error> {
+    // ssm stored should be https://id.awsetc/stage/
+    // apigateway is listening for stage/{subscription_id}
     let callback_url = format!("{}{}", base_invoke_url, &subscription.id.to_string());
 
     let params = {
@@ -23,20 +25,12 @@ async fn handle(
         p.insert("hub.callback", &callback_url);
         p.insert("hub.verify", "sync");
         p.insert("hub.verify_token", verify_token);
-        p.insert("hub.lease_seconds", "3600");
+        p.insert("hub.lease_seconds", "300");
         p
     };
 
     let req = client.post(subscription.hub_url).form(&params);
-
-    dbg!(&req);
-
-    let resp = req.send().await?;
-    dbg!(resp.status());
-    let body = resp.text().await?;
-    tracing::info!("{}", body);
-
-    dbg!(params);
+    req.send().await?.error_for_status()?;
 
     Ok(())
 }
@@ -75,7 +69,6 @@ async fn function_handler(event: LambdaEvent<Event>) -> Result<(), Error> {
     let client = reqwest::ClientBuilder::new().use_rustls_tls().build()?;
     let ssm_params = get_parameters(vec!["INVOKE_URL_SSM_PARAM", "VERIFY_TOKEN_PARAM"]).await?;
 
-    dbg!(&ssm_params);
     let base_invoke_url = ssm_params[0].clone();
     let verify_token = ssm_params[1].clone();
 

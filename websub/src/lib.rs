@@ -1,6 +1,6 @@
 use aws_config::meta::region::RegionProviderChain;
 use serde_derive::{Deserialize, Serialize};
-use serde_dynamo::{from_items, to_item};
+use serde_dynamo::{from_item, from_items, to_item};
 use uuid::Uuid;
 
 use aws_sdk_dynamodb::{
@@ -106,7 +106,7 @@ pub async fn dynamodb_client() -> Client {
     Client::new(&shared_config)
 }
 
-#[allow(dead_code)]
+#[derive(Clone)]
 struct TableConfig {
     subscriptions: String,
     leases: String,
@@ -125,6 +125,7 @@ impl Default for TableConfig {
     }
 }
 
+#[derive(Clone)]
 pub struct WebsubClient {
     client: Client,
     tables: TableConfig,
@@ -168,6 +169,28 @@ impl WebsubClient {
         } else {
             Ok(vec![])
         }
+    }
+
+    pub async fn get_subscription_by_id(&self, id: Uuid) -> Result<Option<Subscription>> {
+        let resp = self
+            .client
+            .query()
+            .table_name(&self.tables.subscriptions)
+            .key_condition_expression("#key = :value")
+            .expression_attribute_names("#key", "id")
+            .expression_attribute_values(":value", AttributeValue::S(id.to_string()))
+            .select(Select::AllAttributes)
+            .send()
+            .await?;
+
+        if let Some(items) = resp.items {
+            if !items.is_empty() {
+                let item = items[0].clone();
+                let subscription = from_item(item)?;
+                return Ok(Some(subscription));
+            }
+        }
+        Ok(None)
     }
 
     pub async fn create_lease(&self, lease: &SubscriptionLease) -> Result<()> {

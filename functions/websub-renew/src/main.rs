@@ -2,17 +2,30 @@ use std::env;
 
 use aws_lambda_events::event::dynamodb::Event;
 use lambda_runtime::{run, service_fn, Error, LambdaEvent};
+use serde_dynamo::from_item;
 use tracing_subscriber::EnvFilter;
+use websub::{SubscriptionLease, WebsubClient};
 
-/// This is the main body for the function.
-/// Write your code inside it.
-/// There are some code example in the following URLs:
-/// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/lambda-runtime/examples
-/// - https://github.com/aws-samples/serverless-rust-demo/
+async fn handle(client: WebsubClient, lease: SubscriptionLease) -> Result<(), Error> {
+    let subscription = client.get_subscription_by_id(lease.subscription_id).await?;
+    if let Some(sub) = subscription {
+        tracing::info!("renewal candidate found {}", sub.id);
+        client.create_subscription(&sub).await?;
+        tracing::info!("renewed {}", sub.id);
+    }
+
+    Ok(())
+}
+
 async fn function_handler(event: LambdaEvent<Event>) -> Result<(), Error> {
     // Extract some useful information from the request
 
-    dbg!(event);
+    let client = WebsubClient::default().await;
+
+    for record in event.payload.records {
+        let item: SubscriptionLease = from_item(record.change.old_image)?;
+        handle(client.clone(), item).await?;
+    }
 
     Ok(())
 }

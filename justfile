@@ -29,3 +29,7 @@ add-spacex:
 
 get-subs:
     cargo run -p websub-cli --release --quiet get-subscriptions
+
+fmt:
+    cargo fmt
+    tf fmt --recursive

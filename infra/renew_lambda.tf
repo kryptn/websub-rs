@@ -16,8 +16,8 @@ resource "aws_lambda_event_source_mapping" "lease_expired" {
     filter {
       pattern = jsonencode({
         userIdentity : {
-          type : ["Service"],
-          principalId : ["dynamodb.amazonaws.com"],
+          type : "Service",
+          principalId : "dynamodb.amazonaws.com",
         }
       })
     }
