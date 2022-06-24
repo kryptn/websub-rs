@@ -20,7 +20,7 @@ resource "aws_lambda_event_source_mapping" "subscription_added" {
   filter_criteria {
     filter {
       pattern = jsonencode({
-        eventName : ["INSERT", "UPDATE"]
+        eventName : ["INSERT", "MODIFY"]
       })
     }
   }

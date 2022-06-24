@@ -1,4 +1,4 @@
-use std::{collections::HashMap, env};
+use std::{collections::HashMap, env, time::Duration};
 
 use aws_lambda_events::event::dynamodb::Event;
 use lambda_runtime::{run, service_fn, Error, LambdaEvent};
@@ -18,6 +18,8 @@ async fn handle(
     // apigateway is listening for stage/{subscription_id}
     let callback_url = format!("{}{}", base_invoke_url, &subscription.id.to_string());
 
+    let lease = (60 * 60 * 18).to_string();
+
     let params = {
         let mut p = HashMap::new();
         p.insert("hub.mode", "subscribe");
@@ -25,7 +27,7 @@ async fn handle(
         p.insert("hub.callback", &callback_url);
         p.insert("hub.verify", "sync");
         p.insert("hub.verify_token", verify_token);
-        p.insert("hub.lease_seconds", "300");
+        p.insert("hub.lease_seconds", &lease);
         p
     };
 

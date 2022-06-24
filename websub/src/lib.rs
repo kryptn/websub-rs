@@ -30,6 +30,10 @@ pub struct Subscription {
 impl Subscription {
     pub fn new(topic_url: String, hub_url: String) -> Self {
         let id = uuid::Uuid::new_v4();
+        Self::new_with_id(id, topic_url, hub_url)
+    }
+
+    fn new_with_id(id: Uuid, topic_url: String, hub_url: String) -> Self {
         let subscribed_at = now();
         Self {
             id,
@@ -37,6 +41,10 @@ impl Subscription {
             hub_url,
             subscribed_at,
         }
+    }
+
+    pub fn renewed(&self) -> Self {
+        Self::new_with_id(self.id, self.topic_url.clone(), self.hub_url.clone())
     }
 }
 

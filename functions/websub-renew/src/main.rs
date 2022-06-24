@@ -8,16 +8,19 @@ use websub::{SubscriptionLease, WebsubClient};
 
 async fn handle(client: WebsubClient, lease: SubscriptionLease) -> Result<(), Error> {
     let subscription = client.get_subscription_by_id(lease.subscription_id).await?;
-    if let Some(mut sub) = subscription {
-        tracing::info!("renewal candidate found {}", sub.id);
-        sub.subscribed_at = {
-            let now = SystemTime::now()
-                .duration_since(SystemTime::UNIX_EPOCH)
-                .unwrap();
-            now.as_secs()
-        };
-        client.create_subscription(&sub).await?;
-        tracing::info!("renewed {}", sub.id);
+    if let Some(sub) = subscription {
+        let before = sub.subscribed_at;
+        let renewed = sub.renewed();
+        let after = renewed.subscribed_at;
+
+        client.create_subscription(&renewed).await?;
+        tracing::info!(
+            "renewed {} before {} after {} delta {}",
+            sub.id,
+            before,
+            after,
+            after - before
+        );
     }
 
     Ok(())
