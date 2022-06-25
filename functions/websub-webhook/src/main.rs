@@ -33,7 +33,7 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
         .first()
         .map(|a| a.name.clone())
         .unwrap_or_else(|| "unknown author".to_string());
-    let link = feed.links.first().unwrap();
+    let link = entry.links.first().unwrap();
 
     let websub = WebsubClient::default().await;
 
