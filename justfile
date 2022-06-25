@@ -24,8 +24,25 @@ build-and-redeploy:
     just build
     just redeploy
 
+add-youtube channelid:
+    cargo run -p websub-cli --release --quiet add-subscription "https://pubsubhubbub.appspot.com/subscribe" "https://www.youtube.com/xml/feeds/videos.xml?channel_id={{channelid}}"
+
 add-spacex:
-    cargo run -p websub-cli --release --quiet add-subscription "https://www.youtube.com/xml/feeds/videos.xml?channel_id=UCtI0Hodo5o5dUb67FeUjDeA" "https://pubsubhubbub.appspot.com/subscribe"
+    just add-youtube UCtI0Hodo5o5dUb67FeUjDeA
+
+add-lmg:
+    # ltt
+    just add-youtube UC0vBXGSyV14uvJ4hECDOl0Q
+
+    # lmg
+    just add-youtube UCXuqSBlHAE6Xw-yeJA0Tunw
+
+    # short-circuit
+    just add-youtube UCXuqSBlHAE6Xw-yeJA0Tunw
+
+    # techlinked
+    just add-youtube UCXuqSBlHAE6Xw-yeJA0Tunw
+
 
 get-subs:
     cargo run -p websub-cli --release --quiet get-subscriptions
@@ -33,3 +50,4 @@ get-subs:
 fmt:
     cargo fmt
     terraform fmt --recursive
+

@@ -15,8 +15,8 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     AddSubscription {
-        topic_url: String,
         hub_url: String,
+        topic_url: String,
     },
     GetSubscriptions,
     AddConsumer {
@@ -24,7 +24,8 @@ enum Commands {
     },
     AddHandler {
         subscription_id: Uuid,
-        consumer_id: Uuid,
+        consumer_name: String,
+        description: Option<String>,
     },
     Tell {
         consumer_name: String,
@@ -72,9 +73,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         Commands::AddHandler {
             subscription_id,
-            consumer_id,
+            consumer_name,
+            description,
         } => {
-            let handler = SubscriptionHandler::new(*subscription_id, *consumer_id);
+            let handler = SubscriptionHandler::new(
+                *subscription_id,
+                consumer_name.clone(),
+                description.clone(),
+            );
             client.add_handler(&handler).await?;
 
             let out = serde_json::to_string(&handler)?;

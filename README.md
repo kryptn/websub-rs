@@ -9,7 +9,7 @@ collection of lambda functions to eventually potentially act as a websub hub
 - [x] api_gateway get -> challenge-verify -> dynamodb insert lease | resp 200
 - [x] on lease expire -> renew -> dynamodb insert subscription
 - [x] cli add-consumer -> add-consumer -> dynamodb insert consumers
-- [ ] cli create-handler -> create-handler -> dynamodb insert handler
+- [x] cli create-handler -> create-handler -> dynamodb insert handler
 - [ ] api_gateway post -> webhook -> find handlers -> for each dynamodb insert message
 - [x] on message insert -> notify -> find consumer -> send message
 

@@ -68,7 +68,6 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
         .parse::<usize>()?;
 
     let path_params = event.path_parameters();
-
     let subscription_id = path_params
         .first("subscription_id")
         .expect("we are providing this value");

@@ -1,21 +1,60 @@
 use std::env;
 
-use lambda_http::{run, service_fn, Error, IntoResponse, Request, Response};
+use feed_rs::parser;
+use lambda_http::{run, service_fn, Body, Error, IntoResponse, Request, RequestExt, Response};
 use tracing_subscriber::EnvFilter;
+use uuid::Uuid;
+use websub::{Message, WebsubClient};
 
 /// This is the main body for the function.
 /// Write your code inside it.
 /// There are some code example in the following URLs:
 /// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/lambda-http/examples
-async fn function_handler(_event: Request) -> Result<impl IntoResponse, Error> {
-    // Extract some useful information from the request
+async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
+    let path_params = event.path_parameters();
+    let subscription_id = path_params
+        .first("subscription_id")
+        .expect("we are providing this value");
+    let subscription_id = Uuid::parse_str(subscription_id)?;
 
-    // Return something that implements IntoResponse.
-    // It will be serialized to the right response event automatically by the runtime
+    let feed = if let Body::Text(body) = event.body() {
+        tracing::info!("message body: {}", body);
+        parser::parse(body.as_bytes())?
+    } else {
+        panic!("expected a text body");
+    };
+
+    dbg!(&feed);
+
+    let author = feed
+        .authors
+        .first()
+        .map(|a| a.name.clone())
+        .unwrap_or_else(|| "unknown author".to_string());
+    let link = feed.links.first().unwrap();
+
+    let websub = WebsubClient::default().await;
+
+    let consumers = websub
+        .get_handlers_for_subscription(subscription_id)
+        .await?;
+
+    let msg_body = format!("{} -- {}", author, link.href);
+    for consumer in consumers {
+        let message = Message::new(
+            feed.id.clone(),
+            consumer.consumer_name,
+            Some(subscription_id),
+            msg_body.clone(),
+        );
+
+        websub.put_message(&message).await?;
+    }
+
     let resp = Response::builder()
         .status(200)
-        .header("content-type", "text/html")
-        .body("Hello AWS Lambda HTTP request")
+        .header("content-type", "text/plain")
+        .body(())
         .map_err(Box::new)?;
     Ok(resp)
 }

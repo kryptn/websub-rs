@@ -36,7 +36,7 @@ resource "aws_dynamodb_table" "subscription_handlers" {
   name         = "subscription_handlers"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "subscription_id"
-  range_key    = "handler_id"
+  range_key    = "consumer_name"
 
   attribute {
     name = "subscription_id"
@@ -44,14 +44,14 @@ resource "aws_dynamodb_table" "subscription_handlers" {
   }
 
   attribute {
-    name = "handler_id"
+    name = "consumer_name"
     type = "S"
   }
 
   local_secondary_index {
-    name            = "handler_idx"
+    name            = "consumer_namex"
     projection_type = "KEYS_ONLY"
-    range_key       = "handler_id"
+    range_key       = "consumer_name"
   }
 
   # attribute {

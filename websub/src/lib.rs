@@ -93,14 +93,16 @@ impl SubscriptionLease {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SubscriptionHandler {
     pub subscription_id: Uuid,
-    pub consumer_id: Uuid,
+    pub consumer_name: String,
+    pub description: Option<String>,
 }
 
 impl SubscriptionHandler {
-    pub fn new(subscription_id: Uuid, consumer_id: Uuid) -> Self {
+    pub fn new(subscription_id: Uuid, consumer_name: String, description: Option<String>) -> Self {
         Self {
             subscription_id,
-            consumer_id,
+            consumer_name,
+            description,
         }
     }
 }
