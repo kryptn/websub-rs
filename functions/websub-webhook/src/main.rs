@@ -26,7 +26,9 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
 
     dbg!(&feed);
 
-    let author = feed
+    let entry = feed.entries.first().unwrap();
+
+    let author = entry
         .authors
         .first()
         .map(|a| a.name.clone())

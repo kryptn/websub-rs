@@ -1,11 +1,24 @@
 
-build:
+build-websub-challenge:
     cargo lambda build -p websub-challenge-response --release --output-format zip
+build-websub-notify:
     cargo lambda build -p websub-notify --release --output-format zip
+build-websub-subscribe:
     cargo lambda build -p websub-subscribe --release --output-format zip
+build-websub-add:
     cargo lambda build -p websub-add-subscription --release --output-format zip
+build-websub-webhook:
     cargo lambda build -p websub-webhook --release --output-format zip
+build-websub-renew:
     cargo lambda build -p websub-renew --release --output-format zip
+
+build:
+    just build-websub-challenge
+    just build-websub-notify
+    just build-websub-subscribe
+    just build-websub-add
+    just build-websub-webhook
+    just build-websub-renew
 
 deploy:
     just infra/ apply
