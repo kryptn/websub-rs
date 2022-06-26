@@ -21,7 +21,7 @@ resource "aws_lambda_function" "fn" {
 
   environment {
     variables = merge({
-      RUST_LOG = "debug"
+      RUST_LOG = "info"
     }, var.environment)
   }
 }

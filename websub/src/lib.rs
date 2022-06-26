@@ -15,7 +15,6 @@ use eyre::Result;
 #[cfg(feature = "ssm")]
 pub mod ssm;
 
-
 fn now() -> u64 {
     let now = SystemTime::now()
         .duration_since(SystemTime::UNIX_EPOCH)

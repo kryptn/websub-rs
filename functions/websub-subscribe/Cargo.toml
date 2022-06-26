@@ -20,6 +20,6 @@ serde_dynamo = { version = "4.0.2", features = ["aws-sdk-dynamodbstreams+0_13", 
 tokio = { version = "1", features = ["macros"] }
 tracing = { version = "0.1", features = ["log"] }
 tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt", "json", "env-filter"] }
-websub = { version = "0.1.0", path = "../../websub" }
+websub = { version = "0.1.0", path = "../../websub", features=["ssm"] }
 
 

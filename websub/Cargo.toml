@@ -20,5 +20,7 @@ rusoto_ssm = { version = "0.48.0", default-features = false, features = ["rustls
 
 
 [features]
-default = []
-ssm = ["dep:rusto_core", "dep:rusto_ssm"]
+# default = ["anyhow", "aws-config", "serde", "serde_derive", "eyre", "uuid"]
+# default = []
+# dynamodb = ["aws-sdk-dynamodb", "serde_dynamo"]
+ssm = ["dep:rusoto_core", "dep:rusoto_ssm"]

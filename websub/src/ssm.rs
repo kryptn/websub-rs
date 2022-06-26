@@ -1,12 +1,10 @@
-use std::{
-    env,
-};
+use std::env;
 
+use anyhow::Result;
 use rusoto_core::Region;
 use rusoto_ssm::{GetParametersRequest, Ssm, SsmClient};
 
-
-pub async fn get_parameters(param_envs: Vec<&str>) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+pub async fn get_parameters(param_envs: Vec<&str>) -> Result<Vec<String>> {
     let ssm_client = SsmClient::new(Region::default());
     let names: Vec<String> = param_envs
         .iter()
