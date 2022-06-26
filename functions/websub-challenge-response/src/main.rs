@@ -8,7 +8,6 @@ use tracing_subscriber::EnvFilter;
 use uuid::Uuid;
 use websub::{ssm::get_parameters, SubscriptionLease, WebsubClient};
 
-
 async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
     let parameters = get_parameters(vec!["VERIFY_TOKEN_PARAM"]).await?;
     let trusted_verify_token = parameters.first().unwrap();
@@ -19,7 +18,10 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
         .expect("we are providing this value");
     let subscription_id = Uuid::parse_str(subscription_id)?;
 
-    tracing::info!("handling challenge subscription_id: {}", subscription_id = subscription_id);
+    tracing::info!(
+        "handling challenge subscription_id: {}",
+        subscription_id = subscription_id
+    );
 
     let query = event.query_string_parameters();
 
@@ -60,7 +62,10 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
 
     client.create_lease(&lease).await?;
 
-    tracing::info!("subscription lease created subscription_id: {}", subscription_id = subscription_id);
+    tracing::info!(
+        "subscription lease created subscription_id: {}",
+        subscription_id = subscription_id
+    );
 
     let resp = Response::builder()
         .status(200)
