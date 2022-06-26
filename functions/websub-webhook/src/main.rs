@@ -44,7 +44,7 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
     let msg_body = format!("{} -- {}", author, link.href);
     for consumer in consumers {
         let message = Message::new(
-            feed.id.clone(),
+            entry.id.clone(),
             consumer.consumer_name,
             Some(subscription_id),
             msg_body.clone(),
