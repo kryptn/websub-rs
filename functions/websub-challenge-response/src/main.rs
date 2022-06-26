@@ -41,6 +41,15 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
     let parameters = get_parameters(vec!["VERIFY_TOKEN_PARAM"]).await?;
     let trusted_verify_token = parameters.first().unwrap();
 
+
+    let path_params = event.path_parameters();
+    let subscription_id = path_params
+        .first("subscription_id")
+        .expect("we are providing this value");
+    let subscription_id = Uuid::parse_str(subscription_id)?;
+
+    tracing::info!("handling challenge subscription_id: {}", subscription_id);
+
     let query = event.query_string_parameters();
 
     let _mode = query
@@ -67,12 +76,6 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
         .expect("we are providing this value")
         .parse::<usize>()?;
 
-    let path_params = event.path_parameters();
-    let subscription_id = path_params
-        .first("subscription_id")
-        .expect("we are providing this value");
-    let subscription_id = Uuid::parse_str(subscription_id)?;
-
     let client = WebsubClient::default().await;
 
     let lease_seconds = lease_seconds - (lease_seconds / 20);
@@ -86,8 +89,6 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
 
     client.create_lease(&lease).await?;
 
-    // Return something that implements IntoResponse.
-    // It will be serialized to the right response event automatically by the runtime
     let resp = Response::builder()
         .status(200)
         .header("content-type", "text/plain")

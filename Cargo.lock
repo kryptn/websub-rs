@@ -2276,6 +2276,8 @@ dependencies = [
  "aws-config",
  "aws-sdk-dynamodb",
  "eyre",
+ "rusoto_core",
+ "rusoto_ssm",
  "serde",
  "serde_derive",
  "serde_dynamo",
