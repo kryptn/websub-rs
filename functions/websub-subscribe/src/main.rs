@@ -29,17 +29,11 @@ async fn handle(
         p
     };
 
-    let req = client.post(subscription.hub_url).form(&params);
-    req.send().await?.error_for_status()?;
+    client.post(subscription.hub_url).form(&params).send().await?.error_for_status()?;
 
     Ok(())
 }
 
-/// This is the main body for the function.
-/// Write your code inside it.
-/// There are some code example in the following URLs:
-/// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/lambda-runtime/examples
-/// - https://github.com/aws-samples/serverless-rust-demo/
 async fn function_handler(event: LambdaEvent<Event>) -> Result<(), Error> {
     // Extract some useful information from the request
 

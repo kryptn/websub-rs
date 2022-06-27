@@ -35,7 +35,6 @@ async fn notify(
         .send()
         .await?
         .error_for_status()?;
-    //client.post(message.)
 
     Ok(())
 }

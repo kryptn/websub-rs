@@ -6,10 +6,6 @@ use tracing_subscriber::EnvFilter;
 use uuid::Uuid;
 use websub::{Message, WebsubClient};
 
-/// This is the main body for the function.
-/// Write your code inside it.
-/// There are some code example in the following URLs:
-/// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/lambda-http/examples
 async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
     let path_params = event.path_parameters();
     let subscription_id = path_params

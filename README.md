@@ -1,6 +1,48 @@
 # Websub
 
-collection of lambda functions to eventually potentially act as a websub hub
+collection of lambda functions to handle maintaining subscriptions to a websub hub and to send notifications to registered consumers. 
+
+## Functions
+
+### subscribe
+
+Triggered on insert for subscriptions table
+
+Makes call to websub hub to subscribe to a new topic
+
+### challenge-response:
+
+Triggered via GET request through api gatway. subscription_id is passed through a parameter
+
+verifies known secret and adds a record into the subscription_leases table
+
+### renew
+
+Triggered on ttl expire for subscription_leases table
+
+queries subscriptions table and re-inserts found entry with a new subscribed_at.
+
+this retriggers the subscribe function
+
+
+### webhook
+
+Triggered via POST request through api gateway. subscription_id is passed through a parameter
+
+todo: verify lease exists for subscription_id
+
+queries subscription_handlers for consumers for this subscription_id
+
+extracts and constructs a notification body
+
+inserts a record into the messages table for each consumer
+
+### notify
+
+Triggered on insert for messages table
+
+queries consumers table for message consumer and sends the message to the consumer
+
 
 ## Plan
 
@@ -19,119 +61,3 @@ collection of lambda functions to eventually potentially act as a websub hub
 - write a way to replay a post request
 - write a way to set a state
 - write a way to clear state
-
-
-## Schema
-
-### table: subscriptions
-    hub_url: String,
-    topic_url: String,
-    handler: String,
-    callback_index: uuid,
-    expiry: usize
-
-### table: subscription_leases
-    index: uuid
-    handler: string
-    expiry: usize
-
-### table: subscription_handlers
-    subscription_id: uuid
-    handler: string
-
-### table: messages
-    index: string
-    body: string
-    handler: string
-    expiry: usize
-
-```mermaid
-
-stateDiagram-v2
-
-    state "Subscribe Function" as subscribe
-    state "Webhook Function" as webhook
-    state "Challenge Function" as challenge
-    state "Send Challenge" as sendchallenge
-    state "Subscriptions" as subscriptions
-    state "Notify" as notify
-    state "Callbacks" as callbacks
-    state "Messages" as messages
-    state "Websub Sub" as websubsub
-
-    [*] --> subscribe
-    subscribe --> callbacks: upsert callback entry
-    subscribe --> websubsub: send subscription
-    callbacks --> sendchallenge: on insert or update
-    subscriptions --> subscribe: on ttl expire and delete
-    challenge --> subscriptions: insert after challenge verified
-
-    webhook --> messages: validate, handler lookup, add message to table
-    messages --> notify: on insert
-    notify --> [*]: send to world
-
-
-```
-
-
-
-
-
-
-## Functions
-
-### subscribe
-iam: dynamodb:
-    subscriptions
-    callbacks
-
-```json
-{
-    "hubUrl": "",
-    "topicUrl": "",
-    "leaseSeconds": "",
-    "handler": "",
-    "callbackKey": "optional"
-}
-```
-
-create callback row
-register subscription with ttl
-
-
-iam: dynamodb
-
-invoke this with event
-
-### subscribe-confirm:
-api gateway -> confirm
-
-### renew
-
-iam: dynamodb:
-    subscriptions
-
-event source
-dynamodb update -> renew -> subscribe
-
-
-
-
-### callback
-
-iam: dynamodb:
-    callbacks
-
-api gateway -> callback -> notify
-
-
-look up callback key from dynamodb, extract event, return notify events
-
-
-### notify
-
-services: dynamodb? ssm
-
-invoke with event
-
-look up notify secrets for target, send event
