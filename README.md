@@ -1,6 +1,6 @@
 # Websub
 
-collection of lambda functions to handle maintaining subscriptions to a websub hub and to send notifications to registered consumers. 
+collection of lambda functions to handle maintaining subscriptions to a websub hub and to send notifications to registered consumers.
 
 ## Functions
 
@@ -54,6 +54,7 @@ queries consumers table for message consumer and sends the message to the consum
 - [x] cli create-handler -> create-handler -> dynamodb insert handler
 - [x] api_gateway post -> webhook -> find handlers -> for each dynamodb insert message
 - [x] on message insert -> notify -> find consumer -> send message
+- [ ] on lease delete -> send unsubscribe
 
 ## Todos
 

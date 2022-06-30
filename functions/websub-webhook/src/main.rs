@@ -7,6 +7,12 @@ use uuid::Uuid;
 use websub::{Message, WebsubClient};
 
 async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
+    let resp = Response::builder()
+        .status(200)
+        .header("content-type", "text/plain")
+        .body(())
+        .map_err(Box::new)?;
+
     let path_params = event.path_parameters();
     let subscription_id = path_params
         .first("subscription_id")
@@ -22,7 +28,11 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
 
     dbg!(&feed);
 
-    let entry = feed.entries.first().unwrap();
+    let entry = if let Some(entry) = feed.entries.first() {
+        entry
+    } else {
+        return Ok(resp);
+    };
 
     let author = entry
         .authors
@@ -49,11 +59,6 @@ async fn function_handler(event: Request) -> Result<impl IntoResponse, Error> {
         websub.put_message(&message).await?;
     }
 
-    let resp = Response::builder()
-        .status(200)
-        .header("content-type", "text/plain")
-        .body(())
-        .map_err(Box::new)?;
     Ok(resp)
 }
 

@@ -29,7 +29,12 @@ async fn handle(
         p
     };
 
-    client.post(subscription.hub_url).form(&params).send().await?.error_for_status()?;
+    client
+        .post(subscription.hub_url)
+        .form(&params)
+        .send()
+        .await?
+        .error_for_status()?;
 
     Ok(())
 }
