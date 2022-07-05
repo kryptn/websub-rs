@@ -9,6 +9,7 @@ members = [
     "functions/websub-renew",
     "functions/websub-subscribe",
     "functions/websub-webhook",
+    "functions/websub-youtube",
 
 
 ]

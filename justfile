@@ -40,8 +40,11 @@ build-and-redeploy:
 add-youtube channelid:
     cargo run -p websub-cli --release --quiet add-subscription "https://pubsubhubbub.appspot.com/subscribe" "https://www.youtube.com/xml/feeds/videos.xml?channel_id={{channelid}}"
 
-add-spacex:
+add-space:
+    # spacex
     just add-youtube UCtI0Hodo5o5dUb67FeUjDeA
+    # rocketlab
+    just add-youtube UCsWq7LZaizhIi-c-Yo_bcpw
 
 add-lmg:
     # ltt
